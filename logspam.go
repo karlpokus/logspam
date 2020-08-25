@@ -5,33 +5,59 @@ import (
 	"io"
 	"log"
 	"math"
+	"os"
+	"os/signal"
+	"syscall"
 	"time"
 )
 
-// Start grabs the reader and writer, combines channels and goroutines
-// and starts listening for input
-func Start(sampleRate int, r io.Reader, w io.Writer) error {
+// Start configures logging, the input-, and output source,
+// combines channels and goroutines and starts listening for input
+func Start(r io.Reader, w io.Writer, sampleRate int, verbose bool) {
 	log.SetOutput(w)
 	log.SetFlags(0)
+	if verbose {
+		log.Printf("logspam started. SampleRate %ds\n", sampleRate)
+	}
 
 	in := make(chan []byte)
 	stop := make(chan struct{})
 	out := make(chan int)
+	errc := make(chan error)
 
 	go tally(in, stop, out)
 	go calc(out, sampleRate)
 	go timer(stop, sampleRate)
+	go listen(in, r, errc)
 
-	return listen(in, r)
+	select {
+	case err := <-errc:
+		if err != nil {
+			log.Printf("Input reading err: %s\n", err)
+		}
+	case <-interrupt():
+		// noop
+	}
+	if verbose {
+		log.Println("logspam exited")
+	}
 }
 
-// listen sends input to the in chan
-func listen(in chan []byte, r io.Reader) error {
+// interrupt returns a chan that recieves interrupt signals
+func interrupt() <-chan os.Signal {
+	sigc := make(chan os.Signal, 1)
+	signal.Notify(sigc, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
+	return sigc
+}
+
+// listen sends input to the in chan and when done, any error encountered
+// reading, to the err chan
+func listen(in chan []byte, r io.Reader, errc chan error) {
 	scanner := bufio.NewScanner(r)
 	for scanner.Scan() {
 		in <- scanner.Bytes()
 	}
-	return scanner.Err()
+	errc <- scanner.Err()
 }
 
 // timer notifyes on the stop chan every sampleRate seconds

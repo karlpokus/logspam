@@ -12,16 +12,12 @@ func TestLogspam(t *testing.T) {
 		line 2
 		line 3`)
 	w := bufw.New(true)
-	errc := make(chan error)
 	go func() {
 		sampleRate := 1
-		errc <- Start(sampleRate, r, w)
+		verbose := false
+		Start(r, w, sampleRate, verbose)
 	}()
 	err := w.Wait()
-	if err != nil {
-		t.Fatal(err)
-	}
-	err = <-errc
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -3,8 +3,9 @@ You know how sometimes when you go to read the logs of a random service, it spew
 
 # usage
 ```bash
-$ ugly-process | logspam
+$ ugly-process | logspam [-v]
 > last sample: 500 lines/s
+> last sample: 800 lines/s
 ```
 
 # build
@@ -18,7 +19,7 @@ On a side note: this project became an interesting challenge to get an accurate 
 - [x] use io.Reader
 - [x] tests
 - [x] build script
-- [ ] print sample rate on upstart or in each dump
+- [x] verbose output and flag
 - [ ] sample rate cli opt
 - [ ] use bufio.Reader if log entry size becomes an issue
 - [ ] start timer as close to sample start as possible
