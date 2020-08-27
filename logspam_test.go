@@ -11,7 +11,7 @@ func TestLogspam(t *testing.T) {
 	r := strings.NewReader(`line 1
 		line 2
 		line 3`)
-	w := bufw.New(true)
+	w := bufw.New()
 	go func() {
 		sampleRate := 1
 		verbose := false
