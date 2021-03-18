@@ -1,16 +1,10 @@
 #!/bin/bash
 
-# This script builds a binary for whatever OS you're running it on
+# This script builds a binary for whatever OS you're running from
 
-go test
-TEST_RESULT=`echo $?`
-if test $TEST_RESULT -ne 0; then
+if ! go test; then
   echo "tests failed. Exiting"
-  exit $TEST_RESULT
+  exit 1
 fi
 
-VERSION=`cat version`
-
-mkdir -p bin/$VERSION
-
-go build -o bin/$VERSION/logspam ./cmd
+go build -o bin/logspam .

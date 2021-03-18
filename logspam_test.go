@@ -1,4 +1,4 @@
-package logspam
+package main
 
 import (
 	"strings"
@@ -15,7 +15,7 @@ func TestLogspam(t *testing.T) {
 	go func() {
 		sampleRate := 1
 		verbose := false
-		Start(r, w, sampleRate, verbose)
+		start(r, w, sampleRate, verbose)
 	}()
 	err := w.Wait()
 	if err != nil {

@@ -1,4 +1,4 @@
-package logspam
+package main
 
 import (
 	"bufio"
@@ -13,7 +13,7 @@ import (
 
 // Start configures logging, the input-, and output source,
 // combines channels and goroutines and starts listening for input
-func Start(r io.Reader, w io.Writer, sampleRate int, verbose bool) {
+func start(r io.Reader, w io.Writer, sampleRate int, verbose bool) {
 	log.SetOutput(w)
 	log.SetFlags(0)
 	if verbose {

@@ -1,4 +1,4 @@
-module logspam
+module github.com/karlpokus/logspam
 
 go 1.14
 
